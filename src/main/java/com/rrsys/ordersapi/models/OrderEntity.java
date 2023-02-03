@@ -1,20 +1,30 @@
 package com.rrsys.ordersapi.models;
 
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Table
+@Entity
 public class OrderEntity {
 
+    @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
     private BigDecimal totalAmout;
     private LocalDateTime date;
     private String customerCPF;
     private OrderStatusEnum status;
+
+    //one orders to many items
+    @OneToMany(mappedBy = "order")
     private List<OrderItemsEntity> orderItems = new ArrayList<>();
 
     public UUID getId() {
