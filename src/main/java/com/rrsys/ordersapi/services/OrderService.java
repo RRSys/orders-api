@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface OrderService {
-    Page<OrderEntity> getAllOrders(Pageable pageable);
-    OrderEntity getOrder(UUID id);
-    OrderEntity addOrder(OrderEntity entity);
-    OrderEntity updateOrder(OrderEntity entity);
+    Page<OrderEntity> getAll(Pageable pageable);
+    OrderEntity get(UUID id);
+    OrderEntity create(OrderEntity entity);
+    OrderEntity update(OrderEntity entity);
 }

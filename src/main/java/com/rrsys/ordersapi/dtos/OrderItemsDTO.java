@@ -1,26 +1,12 @@
-package com.rrsys.ordersapi.models;
+package com.rrsys.ordersapi.dtos;
 
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Entity
-@Table
-public class OrderItemsEntity {
+public class OrderItemsDTO {
 
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
-
     private UUID productId;
-
-    //many items to one order
-    @ManyToOne
-    @JoinColumn(name= "order_id")
-    private OrderEntity order;
     private BigDecimal amount;
     private Integer quantity;
 
@@ -38,14 +24,6 @@ public class OrderItemsEntity {
 
     public void setProductId(UUID productId) {
         this.productId = productId;
-    }
-
-    public OrderEntity getOrder() {
-        return order;
-    }
-
-    public void setOrder(OrderEntity order) {
-        this.order = order;
     }
 
     public BigDecimal getAmount() {
