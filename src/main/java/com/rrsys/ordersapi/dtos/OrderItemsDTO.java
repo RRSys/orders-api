@@ -1,28 +1,12 @@
-package com.rrsys.ordersapi.models;
+package com.rrsys.ordersapi.dtos;
 
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Entity
-@Table(name = "orders_items")
-public class OrderItemsEntity {
+public class OrderItemsDTO {
 
-    @Id
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @Column(columnDefinition = "varchar(255)")
     private UUID id;
-
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    @Column(columnDefinition = "varchar(255)")
     private UUID productId;
-
-    //many items to one order
-    @ManyToOne
-    @JoinColumn(name= "order_id")
-    private OrderEntity order;
     private BigDecimal amount;
     private Integer quantity;
 
@@ -40,14 +24,6 @@ public class OrderItemsEntity {
 
     public void setProductId(UUID productId) {
         this.productId = productId;
-    }
-
-    public OrderEntity getOrder() {
-        return order;
-    }
-
-    public void setOrder(OrderEntity order) {
-        this.order = order;
     }
 
     public BigDecimal getAmount() {

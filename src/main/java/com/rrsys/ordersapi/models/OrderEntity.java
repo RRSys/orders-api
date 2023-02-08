@@ -2,6 +2,7 @@ package com.rrsys.ordersapi.models;
 
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Table
 @Entity
+@Table(name = "orders")
 public class OrderEntity {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(columnDefinition = "varchar(255)")
     private UUID id;
     private BigDecimal totalAmout;
     private LocalDateTime date;
@@ -24,7 +25,7 @@ public class OrderEntity {
     private OrderStatusEnum status;
 
     //one orders to many items
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItemsEntity> orderItems = new ArrayList<>();
 
     public UUID getId() {
@@ -77,5 +78,6 @@ public class OrderEntity {
 
     public void addOrderItem(OrderItemsEntity orderItemsEntity) {
         orderItems.add(orderItemsEntity);
+        orderItemsEntity.setOrder(this);
     }
 }
