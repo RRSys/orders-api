@@ -77,5 +77,6 @@ public class OrderEntity {
 
     public void addOrderItem(OrderItemsEntity orderItemsEntity) {
         orderItems.add(orderItemsEntity);
+        orderItemsEntity.setOrder(this);
     }
 }

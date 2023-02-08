@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")
@@ -30,16 +32,20 @@ public class OrderController {
         orderEntity.setTotalAmout(orderDto.getTotalAmout());
         orderEntity.setDate(LocalDateTime.now());
         orderEntity.setStatus(OrderStatusEnum.PENDING);
-        orderDto.getOrderItems()
-                .forEach(p-> {
+        List<OrderItemsEntity> list = orderDto.getOrderItems().stream().map(p-> {
                     OrderItemsEntity item = new OrderItemsEntity();
                     item.setProductId(p.getProductId());
                     item.setQuantity(p.getQuantity());
                     item.setAmount(p.getAmount());
-                    item.setOrder(orderEntity);
-                    orderEntity.addOrderItem(item);
-                });
+                    return item;
+                }).collect(Collectors.toList());
 
-        orderService.create(orderEntity);
+        list.forEach(orderEntity::addOrderItem);
+
+        orderEntity = orderService.create(orderEntity);
+
+        orderDto.setId(orderEntity.getId());
+
+        return orderDto;
     }
 }
