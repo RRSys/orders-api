@@ -1,20 +1,22 @@
 package com.rrsys.ordersapi.models;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "orders_items")
 public class OrderItemsEntity {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(columnDefinition = "varchar(255)")
     private UUID id;
 
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(columnDefinition = "varchar(255)")
     private UUID productId;
 
     //many items to one order

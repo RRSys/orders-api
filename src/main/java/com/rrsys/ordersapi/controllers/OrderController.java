@@ -1,7 +1,6 @@
 package com.rrsys.ordersapi.controllers;
 
 import com.rrsys.ordersapi.dtos.OrderDTO;
-import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.models.OrderItemsEntity;
 import com.rrsys.ordersapi.services.OrderService;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,9 +28,8 @@ public class OrderController {
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setCustomerCPF(orderDto.getCustomerCPF());
         orderEntity.setTotalAmout(orderDto.getTotalAmout());
-        orderEntity.setDate(LocalDateTime.now());
-        orderEntity.setStatus(OrderStatusEnum.PENDING);
-        List<OrderItemsEntity> list = orderDto.getOrderItems().stream().map(p-> {
+
+        List<OrderItemsEntity> list = orderDto.getItems().stream().map(p-> {
                     OrderItemsEntity item = new OrderItemsEntity();
                     item.setProductId(p.getProductId());
                     item.setQuantity(p.getQuantity());
