@@ -18,6 +18,7 @@ public class OrderEntity {
     @Id
     @Type(type = "org.hibernate.type.UUIDCharType")
     @Column(columnDefinition = "varchar(255)")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private BigDecimal totalAmout;
     private LocalDateTime date;

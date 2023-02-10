@@ -41,4 +41,14 @@ public class OrderItemsDTO {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+    @Override
+    public String toString() {
+        return "OrderItemsDTO{" +
+                "id=" + id +
+                ", productId=" + productId +
+                ", amount=" + amount +
+                ", quantity=" + quantity +
+                '}';
+    }
 }
