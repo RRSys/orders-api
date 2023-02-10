@@ -33,10 +33,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderEntity create(OrderEntity entity) {
 
-        entity.setId(UUID.randomUUID());
         entity.setDate(LocalDateTime.now());
         entity.setStatus(OrderStatusEnum.PENDING);
-        entity.getOrderItems().forEach(p-> p.setId(UUID.randomUUID()));
 
         return orderRepository.save(entity);
     }
