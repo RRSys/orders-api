@@ -6,7 +6,11 @@ import com.rrsys.ordersapi.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/orders")
@@ -20,17 +24,18 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
-    public OrderDTO create(@RequestBody OrderDTO orderDto) {
+    public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO orderDto) {
         log.info("creating a order: {}", orderDto.toString());
-        OrderEntity orderEntity = orderDto.mapperToEntity();
-        orderEntity = orderService.create(orderEntity);
 
-        orderDto = OrderDTO.mapperToDto(orderEntity);
+        orderDto = OrderDTO.mapperToDto(orderService.create(orderDto.mapperToEntity()));
 
         log.info("created order success: {}", orderDto);
 
-        return orderDto;
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
+                .buildAndExpand(orderDto.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(orderDto);
     }
 }
