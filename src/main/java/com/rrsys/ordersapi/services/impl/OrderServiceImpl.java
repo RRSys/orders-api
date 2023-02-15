@@ -22,7 +22,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<OrderEntity> getAll(Pageable pageable) {
-        return null;
+        return orderRepository.findAll(pageable);
     }
 
     @Override

@@ -1,18 +1,17 @@
 package com.rrsys.ordersapi.controllers;
 
 import com.rrsys.ordersapi.dtos.OrderDTO;
-import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -51,5 +50,16 @@ public class OrderController {
         log.info("retrieve order: {}", order);
 
         return ResponseEntity.ok(order);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<OrderDTO>> getAll(@PageableDefault(size = 20) Pageable pageable) {
+        log.info("get all orders with parameters page:{}", pageable);
+
+        Page<OrderDTO> pageDto = orderService.getAll(pageable).map(OrderDTO::mapperToDto);
+
+        log.info("retrieve orders {}", pageDto.getContent());
+
+        return ResponseEntity.ok(pageDto);
     }
 }
