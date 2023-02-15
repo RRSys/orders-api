@@ -27,7 +27,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderEntity get(UUID id) {
-        return null;
+        return orderRepository.getReferenceById(id);
     }
 
     @Override
