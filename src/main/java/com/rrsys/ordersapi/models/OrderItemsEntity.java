@@ -13,6 +13,7 @@ public class OrderItemsEntity {
     @Id
     @Type(type = "org.hibernate.type.UUIDCharType")
     @Column(columnDefinition = "varchar(255)")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Type(type = "org.hibernate.type.UUIDCharType")
