@@ -1,7 +1,6 @@
 package com.rrsys.ordersapi.controllers;
 
 import com.rrsys.ordersapi.dtos.OrderDTO;
-import com.rrsys.ordersapi.dtos.OrderStatusDTO;
 import com.rrsys.ordersapi.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
