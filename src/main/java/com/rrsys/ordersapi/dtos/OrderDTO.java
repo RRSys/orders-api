@@ -1,6 +1,11 @@
 package com.rrsys.ordersapi.dtos;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
+import com.rrsys.ordersapi.models.OrderEntity;
+import com.rrsys.ordersapi.models.OrderItemsEntity;
+import org.aspectj.weaver.ast.Or;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -58,12 +63,39 @@ public class OrderDTO {
         this.items = items;
     }
 
+    public void addItem(OrderItemsDTO items) {
+        this.getItems().add(items);
+    }
+
     public OrderStatusEnum getStatus() {
         return status;
     }
 
     public void setStatus(OrderStatusEnum status) {
         this.status = status;
+    }
+
+    public OrderEntity mapperToEntity(){
+        OrderEntity orderEntity = new OrderEntity();
+        BeanUtils.copyProperties(this, orderEntity);
+        this.items.forEach(p-> {
+            OrderItemsEntity orderItem = new OrderItemsEntity();
+            BeanUtils.copyProperties(p, orderItem);
+            orderEntity.addOrderItem(orderItem);
+        });
+        return orderEntity;
+    }
+
+    public static OrderDTO mapperToDto(OrderEntity entity) {
+        OrderDTO orderDTO = new OrderDTO();
+        BeanUtils.copyProperties(entity, orderDTO);
+        orderDTO.setItems(new ArrayList<>());
+        entity.getOrderItems().forEach(p-> {
+            OrderItemsDTO orderItemsDTO = new OrderItemsDTO();
+            BeanUtils.copyProperties(p, orderItemsDTO);
+            orderDTO.addItem(orderItemsDTO);
+        });
+        return orderDTO;
     }
 
     @Override
