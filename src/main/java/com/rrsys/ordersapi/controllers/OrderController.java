@@ -68,7 +68,7 @@ public class OrderController {
     public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody OrderDTO orderDto) {
         log.info("change status order:{}, status:{}", id, orderDto);
 
-        orderService.update(orderDto.mapperToEntity());
+        orderService.update(id, orderDto.mapperToEntity());
 
         log.info("changed status order:{}, status{}", id, orderDto);
         return ResponseEntity.noContent().build();

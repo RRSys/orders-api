@@ -40,7 +40,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderEntity update(OrderEntity entity) {
-        return null;
+    public OrderEntity update(UUID id, OrderEntity entity) {
+
+        OrderEntity orderEntity = orderRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Order not found"));
+
+        //TODO: valid status
+        orderEntity.setStatus(entity.getStatus());
+
+        orderRepository.save(orderEntity);
+
+        return orderEntity;
     }
 }

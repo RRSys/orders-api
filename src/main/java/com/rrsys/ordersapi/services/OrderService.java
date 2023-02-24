@@ -10,5 +10,5 @@ public interface OrderService {
     Page<OrderEntity> getAll(Pageable pageable);
     OrderEntity get(UUID id);
     OrderEntity create(OrderEntity entity);
-    OrderEntity update(OrderEntity entity);
+    OrderEntity update(UUID id, OrderEntity entity);
 }
