@@ -1,6 +1,7 @@
 package com.rrsys.ordersapi.controllers;
 
 import com.rrsys.ordersapi.dtos.OrderDTO;
+import com.rrsys.ordersapi.dtos.OrderStatusDTO;
 import com.rrsys.ordersapi.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,17 @@ public class OrderController {
 
         log.info("retrieve orders {}", pageDto.getContent());
 
+        
         return ResponseEntity.ok(pageDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody OrderDTO orderDto) {
+        log.info("change status order:{}, status:{}", id, orderDto);
+
+        orderService.update(orderDto.mapperToEntity());
+
+        log.info("changed status order:{}, status{}", id, orderDto);
+        return ResponseEntity.noContent().build();
     }
 }
