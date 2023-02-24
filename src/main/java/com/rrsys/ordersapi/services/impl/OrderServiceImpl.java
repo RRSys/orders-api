@@ -27,7 +27,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderEntity get(UUID id) {
-        return orderRepository.getReferenceById(id);
+        return orderRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Order not found"));
     }
 
     @Override
