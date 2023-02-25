@@ -19,9 +19,13 @@ public class OrderEntity {
     @Column(columnDefinition = "varchar(255)")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(nullable = false)
     private BigDecimal totalAmout;
+    @Column(nullable = false)
     private LocalDateTime date;
+    @Column(nullable = false, updatable = false)
     private String customerCPF;
+    @Column(nullable = false)
     private OrderStatusEnum status;
 
     //one orders to many items

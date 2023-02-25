@@ -17,14 +17,16 @@ public class OrderItemsEntity {
     private UUID id;
 
     @Type(type = "org.hibernate.type.UUIDCharType")
-    @Column(columnDefinition = "varchar(255)")
+    @Column(columnDefinition = "varchar(255)", nullable = false, updatable = false)
     private UUID productId;
 
     //many items to one order
     @ManyToOne
-    @JoinColumn(name= "order_id")
+    @JoinColumn(name= "order_id", nullable = false)
     private OrderEntity order;
+    @Column(nullable = false)
     private BigDecimal amount;
+    @Column(nullable = false)
     private Integer quantity;
 
     public UUID getId() {
