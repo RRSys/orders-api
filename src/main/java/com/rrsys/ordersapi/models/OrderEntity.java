@@ -1,7 +1,6 @@
 package com.rrsys.ordersapi.models;
 
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;

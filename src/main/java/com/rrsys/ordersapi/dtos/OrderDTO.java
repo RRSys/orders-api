@@ -1,10 +1,8 @@
 package com.rrsys.ordersapi.dtos;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.models.OrderItemsEntity;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
