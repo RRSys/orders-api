@@ -1,6 +1,8 @@
 package com.rrsys.ordersapi.services.impl;
 
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
+import com.rrsys.ordersapi.exceptions.NotFoundException;
+import com.rrsys.ordersapi.exceptions.ValidationOrderException;
 import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.repositories.OrderRepository;
 import com.rrsys.ordersapi.services.OrderService;
@@ -28,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderEntity get(UUID id) {
         return orderRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Order not found"));
+                .orElseThrow(()-> new NotFoundException("Order not found"));
     }
 
     @Override
@@ -44,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderEntity update(UUID id, OrderEntity entity) {
 
         OrderEntity orderEntity = orderRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Order not found"));
+                .orElseThrow(()-> new NotFoundException("Order not found"));
 
         setAndValidOrderStatus(orderEntity, entity.getStatus());
 
@@ -72,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         if(validStatus) {
             order.setStatus(status);
         } else {
-            throw new RuntimeException("status is not valid");
+            throw new ValidationOrderException("status is not valid");
         }
     }
 }
