@@ -1,7 +1,6 @@
 package com.rrsys.ordersapi.models;
 
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -20,14 +19,35 @@ public class OrderEntity {
     @Column(columnDefinition = "varchar(255)")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(nullable = false)
     private BigDecimal totalAmout;
+    @Column(nullable = false)
     private LocalDateTime date;
+    @Column(nullable = false, updatable = false)
     private String customerCPF;
+    @Column(nullable = false)
     private OrderStatusEnum status;
 
     //one orders to many items
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItemsEntity> orderItems = new ArrayList<>();
+
+    public OrderEntity(OrderStatusEnum status) {
+        this.status = status;
+    }
+
+    public OrderEntity(UUID id, BigDecimal totalAmout, LocalDateTime date, String customerCPF, OrderStatusEnum status, List<OrderItemsEntity> orderItems) {
+        this.id = id;
+        this.totalAmout = totalAmout;
+        this.date = date;
+        this.customerCPF = customerCPF;
+        this.status = status;
+        this.orderItems = orderItems;
+    }
+
+    public OrderEntity() {
+
+    }
 
     public UUID getId() {
         return id;
