@@ -29,6 +29,23 @@ public class OrderEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItemsEntity> orderItems = new ArrayList<>();
 
+    public OrderEntity(OrderStatusEnum status) {
+        this.status = status;
+    }
+
+    public OrderEntity(UUID id, BigDecimal totalAmout, LocalDateTime date, String customerCPF, OrderStatusEnum status, List<OrderItemsEntity> orderItems) {
+        this.id = id;
+        this.totalAmout = totalAmout;
+        this.date = date;
+        this.customerCPF = customerCPF;
+        this.status = status;
+        this.orderItems = orderItems;
+    }
+
+    public OrderEntity() {
+
+    }
+
     public UUID getId() {
         return id;
     }

@@ -46,11 +46,33 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity orderEntity = orderRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Order not found"));
 
-        //TODO: valid status
-        orderEntity.setStatus(entity.getStatus());
+        setAndValidOrderStatus(orderEntity, entity.getStatus());
 
         orderRepository.save(orderEntity);
 
         return orderEntity;
+    }
+
+    private void setAndValidOrderStatus(OrderEntity order, OrderStatusEnum status) {
+        if(order.getStatus() == status) return;
+        boolean validStatus = false;
+        switch (status) {
+            case APPROVED:
+                validStatus = order.getStatus() == OrderStatusEnum.PENDING;
+                break;
+            case COMPLETED:
+                validStatus = order.getStatus() == OrderStatusEnum.APPROVED;
+                break;
+            case CANCELLED:
+                validStatus = order.getStatus() == OrderStatusEnum.APPROVED || order.getStatus() == OrderStatusEnum.PENDING;
+                break;
+            default:
+        }
+
+        if(validStatus) {
+            order.setStatus(status);
+        } else {
+            throw new RuntimeException("status is not valid");
+        }
     }
 }
