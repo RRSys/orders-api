@@ -1,6 +1,7 @@
 package com.rrsys.ordersapi.controllers;
 
-import com.rrsys.ordersapi.dtos.OrderDTO;
+import com.rrsys.ordersapi.dtos.OrderCreateDTO;
+import com.rrsys.ordersapi.dtos.OrderUpdateDTO;
 import com.rrsys.ordersapi.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.UUID;
 
@@ -27,25 +29,25 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderDTO> create(@RequestBody OrderDTO orderDto) {
-        log.info("creating a order: {}", orderDto.toString());
+    public ResponseEntity<OrderCreateDTO> create(@RequestBody @Valid OrderCreateDTO orderCreateDto) {
+        log.info("creating a order: {}", orderCreateDto.toString());
 
-        orderDto = OrderDTO.mapperToDto(orderService.create(orderDto.mapperToEntity()));
+        orderCreateDto = OrderCreateDTO.mapperToDto(orderService.create(orderCreateDto.mapperToEntity()));
 
-        log.info("created order success: {}", orderDto);
+        log.info("created order success: {}", orderCreateDto);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-                .buildAndExpand(orderDto.getId())
+                .buildAndExpand(orderCreateDto.getId())
                 .toUri();
 
-        return ResponseEntity.created(uri).body(orderDto);
+        return ResponseEntity.created(uri).body(orderCreateDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> get(@PathVariable UUID id) {
+    public ResponseEntity<OrderCreateDTO> get(@PathVariable UUID id) {
         log.info("get order by id {}", id);
 
-        OrderDTO order = OrderDTO.mapperToDto(orderService.get(id));
+        OrderCreateDTO order = OrderCreateDTO.mapperToDto(orderService.get(id));
 
         log.info("retrieve order: {}", order);
 
@@ -53,10 +55,10 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<OrderDTO>> getAll(@PageableDefault(size = 20) Pageable pageable) {
+    public ResponseEntity<Page<OrderCreateDTO>> getAll(@PageableDefault(size = 20) Pageable pageable) {
         log.info("get all orders with parameters page:{}", pageable);
 
-        Page<OrderDTO> pageDto = orderService.getAll(pageable).map(OrderDTO::mapperToDto);
+        Page<OrderCreateDTO> pageDto = orderService.getAll(pageable).map(OrderCreateDTO::mapperToDto);
 
         log.info("retrieve orders {}", pageDto.getContent());
 
@@ -65,12 +67,12 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody OrderDTO orderDto) {
-        log.info("change status order:{}, status:{}", id, orderDto);
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody @Valid OrderUpdateDTO orderUpdateDTO) {
+        log.info("change status order:{}, status:{}", id, orderUpdateDTO);
 
-        orderService.update(id, orderDto.mapperToEntity());
+        orderService.update(id, orderUpdateDTO.mapperToEntity());
 
-        log.info("changed status order:{}, status{}", id, orderDto);
+        log.info("changed status order:{}, status{}", id, orderUpdateDTO);
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,13 +1,18 @@
 package com.rrsys.ordersapi.dtos;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public class OrderItemsDTO {
 
     private UUID id;
+    @NotNull
     private UUID productId;
+    @NotNull
     private BigDecimal amount;
+    @Positive
     private Integer quantity;
 
     public UUID getId() {

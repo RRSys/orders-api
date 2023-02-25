@@ -1,26 +1,30 @@
 package com.rrsys.ordersapi.dtos;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.models.OrderItemsEntity;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class OrderDTO {
+public class OrderCreateDTO {
 
     private UUID id;
+    @NotNull
     private BigDecimal totalAmout;
     private LocalDateTime date;
+    @NotBlank
     private String customerCPF;
     private OrderStatusEnum status;
 
+    @Valid
     private List<OrderItemsDTO> items = new ArrayList<>();
 
     public UUID getId() {
@@ -86,26 +90,27 @@ public class OrderDTO {
         return orderEntity;
     }
 
-    public static OrderDTO mapperToDto(OrderEntity entity) {
-        OrderDTO orderDTO = new OrderDTO();
-        BeanUtils.copyProperties(entity, orderDTO);
-        orderDTO.setItems(new ArrayList<>());
+    public static OrderCreateDTO mapperToDto(OrderEntity entity) {
+        OrderCreateDTO orderCreateDTO = new OrderCreateDTO();
+        BeanUtils.copyProperties(entity, orderCreateDTO);
+        orderCreateDTO.setItems(new ArrayList<>());
         entity.getOrderItems().forEach(p-> {
             OrderItemsDTO orderItemsDTO = new OrderItemsDTO();
             BeanUtils.copyProperties(p, orderItemsDTO);
-            orderDTO.addItem(orderItemsDTO);
+            orderCreateDTO.addItem(orderItemsDTO);
         });
-        return orderDTO;
+        return orderCreateDTO;
     }
 
     @Override
     public String toString() {
-        return "OrderDTO{" +
+        return "OrderCreateDTO{" +
                 "id=" + id +
                 ", totalAmout=" + totalAmout +
+                ", date=" + date +
                 ", customerCPF='" + customerCPF + '\'' +
+                ", status=" + status +
                 ", items=" + items +
                 '}';
     }
-
 }

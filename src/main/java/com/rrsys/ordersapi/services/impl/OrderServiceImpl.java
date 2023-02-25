@@ -1,6 +1,8 @@
 package com.rrsys.ordersapi.services.impl;
 
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
+import com.rrsys.ordersapi.exceptions.NotFoundException;
+import com.rrsys.ordersapi.exceptions.ValidationOrderException;
 import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.repositories.OrderRepository;
 import com.rrsys.ordersapi.services.OrderService;
@@ -28,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderEntity get(UUID id) {
         return orderRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Order not found"));
+                .orElseThrow(()-> new NotFoundException("Order not found"));
     }
 
     @Override
@@ -44,13 +46,35 @@ public class OrderServiceImpl implements OrderService {
     public OrderEntity update(UUID id, OrderEntity entity) {
 
         OrderEntity orderEntity = orderRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Order not found"));
+                .orElseThrow(()-> new NotFoundException("Order not found"));
 
-        //TODO: valid status
-        orderEntity.setStatus(entity.getStatus());
+        setAndValidOrderStatus(orderEntity, entity.getStatus());
 
         orderRepository.save(orderEntity);
 
         return orderEntity;
+    }
+
+    private void setAndValidOrderStatus(OrderEntity order, OrderStatusEnum status) {
+        if(order.getStatus() == status) return;
+        boolean validStatus = false;
+        switch (status) {
+            case APPROVED:
+                validStatus = order.getStatus() == OrderStatusEnum.PENDING;
+                break;
+            case COMPLETED:
+                validStatus = order.getStatus() == OrderStatusEnum.APPROVED;
+                break;
+            case CANCELLED:
+                validStatus = order.getStatus() == OrderStatusEnum.APPROVED || order.getStatus() == OrderStatusEnum.PENDING;
+                break;
+            default:
+        }
+
+        if(validStatus) {
+            order.setStatus(status);
+        } else {
+            throw new ValidationOrderException("status is not valid");
+        }
     }
 }
