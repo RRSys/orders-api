@@ -3,6 +3,9 @@ package com.rrsys.ordersapi.dtos;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.models.OrderItemsEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.Valid;
@@ -14,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderCreateDTO {
 
     private UUID id;
