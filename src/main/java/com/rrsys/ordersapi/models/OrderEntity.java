@@ -20,7 +20,7 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @Column(nullable = false)
-    private BigDecimal totalAmout;
+    private BigDecimal totalAmount;
     @Column(nullable = false)
     private LocalDateTime date;
     @Column(nullable = false, updatable = false)
@@ -36,9 +36,9 @@ public class OrderEntity {
         this.status = status;
     }
 
-    public OrderEntity(UUID id, BigDecimal totalAmout, LocalDateTime date, String customerCPF, OrderStatusEnum status, List<OrderItemsEntity> orderItems) {
+    public OrderEntity(UUID id, BigDecimal totalAmount, LocalDateTime date, String customerCPF, OrderStatusEnum status, List<OrderItemsEntity> orderItems) {
         this.id = id;
-        this.totalAmout = totalAmout;
+        this.totalAmount = totalAmount;
         this.date = date;
         this.customerCPF = customerCPF;
         this.status = status;
@@ -57,12 +57,12 @@ public class OrderEntity {
         this.id = id;
     }
 
-    public BigDecimal getTotalAmout() {
-        return totalAmout;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTotalAmout(BigDecimal totalAmout) {
-        this.totalAmout = totalAmout;
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public LocalDateTime getDate() {
