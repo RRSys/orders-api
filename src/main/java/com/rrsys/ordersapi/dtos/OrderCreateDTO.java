@@ -24,7 +24,7 @@ public class OrderCreateDTO {
 
     private UUID id;
     @NotNull
-    private BigDecimal totalAmout;
+    private BigDecimal totalAmount;
     private LocalDateTime date;
     @NotBlank
     private String customerCPF;
@@ -49,12 +49,12 @@ public class OrderCreateDTO {
         this.date = date;
     }
 
-    public BigDecimal getTotalAmout() {
-        return totalAmout;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTotalAmout(BigDecimal totalAmout) {
-        this.totalAmout = totalAmout;
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public String getCustomerCPF() {
@@ -112,7 +112,7 @@ public class OrderCreateDTO {
     public String toString() {
         return "OrderCreateDTO{" +
                 "id=" + id +
-                ", totalAmout=" + totalAmout +
+                ", totalAmout=" + totalAmount +
                 ", date=" + date +
                 ", customerCPF='" + customerCPF + '\'' +
                 ", status=" + status +
