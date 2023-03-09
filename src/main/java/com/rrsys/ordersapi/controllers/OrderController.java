@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/v1/orders")
 public class OrderController {
 
     public static final Logger log = LoggerFactory.getLogger(OrderController.class);

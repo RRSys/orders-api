@@ -71,10 +71,9 @@ public class OrderServiceImpl implements OrderService {
             default:
         }
 
-        if(validStatus) {
-            order.setStatus(status);
-        } else {
-            throw new ValidationOrderException("status is not valid");
+        if(!validStatus) {
+           throw new ValidationOrderException("status is not valid");
         }
+        order.setStatus(status);
     }
 }
