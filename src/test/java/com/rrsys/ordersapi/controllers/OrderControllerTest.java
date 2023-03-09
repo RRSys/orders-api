@@ -10,7 +10,6 @@ import com.rrsys.ordersapi.services.OrderService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,7 +49,7 @@ class OrderControllerTest {
         mockMvc.perform(get("/v1/orders/"+UUID.randomUUID()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.customerCPF").value("111111111"))
-                .andExpect(jsonPath("$.totalAmout").value(BigDecimal.TEN)); //TODO fix name field
+                .andExpect(jsonPath("$.totalAmount").value(BigDecimal.TEN)); //TODO fix name field
     }
 
     @SneakyThrows
@@ -68,7 +67,7 @@ class OrderControllerTest {
     public OrderCreateDTO getOrderDto(){
         return OrderCreateDTO.builder()
                 .customerCPF("111111111")
-                .totalAmout(BigDecimal.TEN)
+                .totalAmount(BigDecimal.TEN)
                 .items(Collections.singletonList(OrderItemsDTO.builder()
                         .amount(BigDecimal.TEN)
                         .productId(UUID.randomUUID())
@@ -82,7 +81,7 @@ class OrderControllerTest {
         order.setId(UUID.randomUUID());
         order.setStatus(OrderStatusEnum.PENDING);
         order.setDate(LocalDateTime.now());
-        order.setTotalAmout(BigDecimal.TEN);
+        order.setTotalAmount(BigDecimal.TEN);
         order.setCustomerCPF("111111111");
         order.setOrderItems(Collections.singletonList(new OrderItemsEntity()));
         return order;
