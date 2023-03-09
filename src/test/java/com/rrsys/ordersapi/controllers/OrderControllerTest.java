@@ -3,6 +3,7 @@ package com.rrsys.ordersapi.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rrsys.ordersapi.dtos.OrderCreateDTO;
 import com.rrsys.ordersapi.dtos.OrderItemsDTO;
+import com.rrsys.ordersapi.dtos.OrderUpdateDTO;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.models.OrderItemsEntity;
@@ -25,8 +26,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class OrderControllerTest {
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private MockMvc mockMvc;
 
@@ -49,12 +50,13 @@ class OrderControllerTest {
         mockMvc.perform(get("/v1/orders/"+UUID.randomUUID()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.customerCPF").value("111111111"))
-                .andExpect(jsonPath("$.totalAmount").value(BigDecimal.TEN)); //TODO fix name field
+                .andExpect(jsonPath("$.totalAmount").value(BigDecimal.TEN));
     }
 
     @SneakyThrows
     @Test
     public void shouldCreateAOrder() {
+        when(orderService.create(any())).thenReturn(getOrder());
         this.mockMvc
                 .perform(post("/v1/orders")
                         .content(asJsonString(getOrderDto()))
@@ -62,6 +64,17 @@ class OrderControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.customerCPF").exists());
+    }
+
+    @SneakyThrows
+    @Test
+    public void shouldUpdateOrder() {
+        this.mockMvc
+                .perform(put("/v1/orders/"+UUID.randomUUID())
+                         .content(asJsonString(getOrderUpdateDto()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 
     public OrderCreateDTO getOrderDto(){
@@ -73,6 +86,13 @@ class OrderControllerTest {
                         .productId(UUID.randomUUID())
                         .quantity(1)
                         .build()))
+                .build();
+    }
+
+    public OrderUpdateDTO getOrderUpdateDto(){
+        return OrderUpdateDTO.builder()
+                    .id(UUID.randomUUID())
+                    .status(OrderStatusEnum.APPROVED)
                 .build();
     }
 
