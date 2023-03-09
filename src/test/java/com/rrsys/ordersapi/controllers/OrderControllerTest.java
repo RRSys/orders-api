@@ -63,7 +63,8 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.customerCPF").exists());
+                .andExpect(jsonPath("$.customerCPF").exists())
+                .andExpect(jsonPath("$.totalAmount").value(BigDecimal.TEN));
     }
 
     @SneakyThrows
