@@ -31,6 +31,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasSize;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,7 +55,11 @@ class OrderControllerTest {
         mockMvc.perform(get("/v1/orders/"+UUID.randomUUID()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.customerCPF").value("111111111"))
-                .andExpect(jsonPath("$.totalAmount").value(BigDecimal.TEN));
+                .andExpect(jsonPath("$.totalAmount").value(10))
+                .andExpect(jsonPath("$.items", not(empty())))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].amount", is(10)))
+                .andExpect(jsonPath("$.items[0].quantity", is(1)));
     }
 
     @SneakyThrows
@@ -104,7 +113,11 @@ class OrderControllerTest {
         order.setDate(LocalDateTime.now());
         order.setTotalAmount(BigDecimal.TEN);
         order.setCustomerCPF("111111111");
-        order.setOrderItems(Collections.singletonList(new OrderItemsEntity()));
+        OrderItemsEntity orderItemsEntity = new OrderItemsEntity();
+        orderItemsEntity.setAmount(BigDecimal.TEN);
+        orderItemsEntity.setQuantity(1);
+        orderItemsEntity.setProductId(UUID.randomUUID());
+        order.setOrderItems(Collections.singletonList(orderItemsEntity));
         return order;
     }
 
