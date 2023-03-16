@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,6 +35,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -59,7 +60,8 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.items", not(empty())))
                 .andExpect(jsonPath("$.items", hasSize(1)))
                 .andExpect(jsonPath("$.items[0].amount", is(10)))
-                .andExpect(jsonPath("$.items[0].quantity", is(1)));
+                .andExpect(jsonPath("$.items[0].quantity", is(1)))
+                .andExpect(jsonPath("$.items[0].productId", notNullValue()));
     }
 
     @SneakyThrows
@@ -72,8 +74,13 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.customerCPF").exists())
-                .andExpect(jsonPath("$.totalAmount").value(BigDecimal.TEN));
+                .andExpect(jsonPath("$.customerCPF").value("111111111"))
+                .andExpect(jsonPath("$.totalAmount").value(10))
+                .andExpect(jsonPath("$.items", not(empty())))
+                .andExpect(jsonPath("$.items", hasSize(1)))
+                .andExpect(jsonPath("$.items[0].amount", is(10)))
+                .andExpect(jsonPath("$.items[0].quantity", is(1)))
+                .andExpect(jsonPath("$.items[0].productId", notNullValue()));
     }
 
     @SneakyThrows
@@ -85,6 +92,8 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());
+
+        verify(orderService, times(1)).update(any(), any());
     }
 
     public OrderCreateDTO getOrderDto(){
