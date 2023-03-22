@@ -14,9 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -121,6 +121,15 @@ class OrderServiceImplTest {
             orderService.update(UUID.randomUUID(), new OrderEntity(OrderStatusEnum.CANCELLED));
         });
         assertTrue(exception.getMessage().contains("status is not valid"));
+    }
+
+    @Test
+    void shouldCreateANewOrderWithSuccess() {
+        OrderEntity orderEntityMockDb = new OrderEntity(OrderStatusEnum.COMPLETED);
+        when(orderRepository.save(any())).thenReturn(orderEntityMockDb);
+        orderEntityMockDb = orderService.create(orderEntityMockDb);
+        assertEquals(OrderStatusEnum.PENDING, orderEntityMockDb.getStatus());
+        verify(orderRepository, times(1)).save(any());
     }
 
 }
