@@ -132,4 +132,13 @@ class OrderServiceImplTest {
         verify(orderRepository, times(1)).save(any());
     }
 
+    @Test
+    void shouldGetAOrderWithSuccess() {
+        var orderMock = new OrderEntity(OrderStatusEnum.APPROVED);
+        when(orderRepository.findById(any())).thenReturn(Optional.of(orderMock));
+        var order = orderService.get(UUID.randomUUID());
+        assertNotNull(order);
+        assertEquals(OrderStatusEnum.APPROVED, order.getStatus());
+    }
+
 }
