@@ -39,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
         entity.setDate(LocalDateTime.now());
         entity.setStatus(OrderStatusEnum.PENDING);
 
+
         return orderRepository.save(entity);
     }
 
