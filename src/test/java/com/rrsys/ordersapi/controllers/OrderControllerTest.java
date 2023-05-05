@@ -10,13 +10,10 @@ import com.rrsys.ordersapi.models.OrderItemsEntity;
 import com.rrsys.ordersapi.services.OrderService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -24,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,15 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
-
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(OrderController.class)
 class OrderControllerTest {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -50,7 +40,7 @@ class OrderControllerTest {
     private OrderService orderService;
 
     @Test
-    public void shouldGetAOrderById() throws Exception {
+    void shouldGetAOrderById() throws Exception {
         OrderEntity orderEntity = getOrder();
         when(orderService.get(any())).thenReturn(orderEntity);
         mockMvc.perform(get("/v1/orders/"+UUID.randomUUID()))
@@ -66,7 +56,7 @@ class OrderControllerTest {
 
     @SneakyThrows
     @Test
-    public void shouldCreateAOrder() {
+    void shouldCreateAOrder() {
         when(orderService.create(any())).thenReturn(getOrder());
         this.mockMvc
                 .perform(post("/v1/orders")
@@ -85,7 +75,7 @@ class OrderControllerTest {
 
     @SneakyThrows
     @Test
-    public void shouldUpdateOrder() {
+    void shouldUpdateOrder() {
         this.mockMvc
                 .perform(put("/v1/orders/"+UUID.randomUUID())
                          .content(asJsonString(getOrderUpdateDto()))
@@ -96,7 +86,7 @@ class OrderControllerTest {
         verify(orderService, times(1)).update(any(), any());
     }
 
-    public OrderCreateDTO getOrderDto(){
+    OrderCreateDTO getOrderDto(){
         return OrderCreateDTO.builder()
                 .customerCPF("111111111")
                 .totalAmount(BigDecimal.TEN)
@@ -108,14 +98,14 @@ class OrderControllerTest {
                 .build();
     }
 
-    public OrderUpdateDTO getOrderUpdateDto(){
+    OrderUpdateDTO getOrderUpdateDto(){
         return OrderUpdateDTO.builder()
                     .id(UUID.randomUUID())
                     .status(OrderStatusEnum.APPROVED)
                 .build();
     }
 
-    public OrderEntity getOrder(){
+    OrderEntity getOrder(){
         OrderEntity order = new OrderEntity();
         order.setId(UUID.randomUUID());
         order.setStatus(OrderStatusEnum.PENDING);
@@ -130,7 +120,7 @@ class OrderControllerTest {
         return order;
     }
 
-    public static String asJsonString(final Object obj) {
+    static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {

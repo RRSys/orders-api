@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,6 +31,8 @@ public class OrderCreateDTO {
     private String customerCPF;
     private OrderStatusEnum status;
 
+    @NotEmpty
+    @NotNull
     @Valid
     private List<OrderItemsDTO> items = new ArrayList<>();
 
