@@ -50,7 +50,7 @@ class OrderControllerTest {
     private OrderService orderService;
 
     @Test
-    public void shouldGetAOrderById() throws Exception {
+    void shouldGetAOrderById() throws Exception {
         OrderEntity orderEntity = getOrder();
         when(orderService.get(any())).thenReturn(orderEntity);
         mockMvc.perform(get("/v1/orders/"+UUID.randomUUID()))
@@ -66,7 +66,7 @@ class OrderControllerTest {
 
     @SneakyThrows
     @Test
-    public void shouldCreateAOrder() {
+    void shouldCreateAOrder() {
         when(orderService.create(any())).thenReturn(getOrder());
         this.mockMvc
                 .perform(post("/v1/orders")
@@ -85,7 +85,7 @@ class OrderControllerTest {
 
     @SneakyThrows
     @Test
-    public void shouldUpdateOrder() {
+    void shouldUpdateOrder() {
         this.mockMvc
                 .perform(put("/v1/orders/"+UUID.randomUUID())
                          .content(asJsonString(getOrderUpdateDto()))
@@ -96,7 +96,7 @@ class OrderControllerTest {
         verify(orderService, times(1)).update(any(), any());
     }
 
-    public OrderCreateDTO getOrderDto(){
+    OrderCreateDTO getOrderDto(){
         return OrderCreateDTO.builder()
                 .customerCPF("111111111")
                 .totalAmount(BigDecimal.TEN)
@@ -108,14 +108,14 @@ class OrderControllerTest {
                 .build();
     }
 
-    public OrderUpdateDTO getOrderUpdateDto(){
+    OrderUpdateDTO getOrderUpdateDto(){
         return OrderUpdateDTO.builder()
                     .id(UUID.randomUUID())
                     .status(OrderStatusEnum.APPROVED)
                 .build();
     }
 
-    public OrderEntity getOrder(){
+    OrderEntity getOrder(){
         OrderEntity order = new OrderEntity();
         order.setId(UUID.randomUUID());
         order.setStatus(OrderStatusEnum.PENDING);
@@ -130,7 +130,7 @@ class OrderControllerTest {
         return order;
     }
 
-    public static String asJsonString(final Object obj) {
+    static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
