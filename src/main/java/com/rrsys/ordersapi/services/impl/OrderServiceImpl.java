@@ -1,13 +1,18 @@
 package com.rrsys.ordersapi.services.impl;
 
+import com.rrsys.ordersapi.clients.ProductsClients;
+import com.rrsys.ordersapi.clients.response.product.ProductResponseClient;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import com.rrsys.ordersapi.exceptions.NotFoundException;
 import com.rrsys.ordersapi.exceptions.ValidationOrderException;
 import com.rrsys.ordersapi.models.OrderEntity;
+import com.rrsys.ordersapi.models.OrderItemsEntity;
 import com.rrsys.ordersapi.repositories.OrderRepository;
 import com.rrsys.ordersapi.services.OrderService;
+import feign.FeignException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,9 +22,11 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final ProductsClients productsClients;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, ProductsClients productsClients) {
         this.orderRepository = orderRepository;
+        this.productsClients = productsClients;
     }
 
     @Override
@@ -39,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
         entity.setDate(LocalDateTime.now());
         entity.setStatus(OrderStatusEnum.PENDING);
 
+        entity.getOrderItems().forEach(this::validateProduct);
 
         return orderRepository.save(entity);
     }
@@ -76,5 +84,18 @@ public class OrderServiceImpl implements OrderService {
            throw new ValidationOrderException("status is not valid");
         }
         order.setStatus(status);
+    }
+
+    private Boolean validateProduct(OrderItemsEntity orderItemsEntity){
+        try {
+            productsClients.findById(orderItemsEntity.getProductId()).getBody();
+
+            return true;
+        } catch (FeignException ex) {
+            if(ex.status() == 404) {
+                throw new NotFoundException("product not found, productId: "+ orderItemsEntity.getProductId());
+            }
+            throw new ValidationOrderException("fatal error, productId: "+ orderItemsEntity.getProductId());
+        }
     }
 }
