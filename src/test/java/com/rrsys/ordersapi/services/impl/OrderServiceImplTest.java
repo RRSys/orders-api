@@ -1,7 +1,10 @@
 package com.rrsys.ordersapi.services.impl;
 
+import com.rrsys.ordersapi.clients.ProductsClients;
+import com.rrsys.ordersapi.clients.response.product.ProductResponseClient;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import com.rrsys.ordersapi.models.OrderEntity;
+import com.rrsys.ordersapi.models.OrderItemsEntity;
 import com.rrsys.ordersapi.repositories.OrderRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,9 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +30,9 @@ class OrderServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private ProductsClients productsClients;
 
     @Test
     void shouldUpdateOrderEntityToAPPROVED() {
@@ -133,12 +140,54 @@ class OrderServiceImplTest {
     }
 
     @Test
+    void shouldCreateANewOrderWithSuccessAndCalculateTotalAmout() {
+        var prod1 = UUID.randomUUID();
+        var prod2 = UUID.randomUUID();
+        OrderEntity orderEntityMockDb = getOrderEntity(List.of(prod1, prod2));
+
+        when(productsClients.findById(prod1))
+                .thenReturn(ResponseEntity.ok(getProductResponseClient(BigDecimal.valueOf(1.1))));
+        when(productsClients.findById(prod2))
+                .thenReturn(ResponseEntity.ok(getProductResponseClient(BigDecimal.valueOf(2.2))));
+        when(orderRepository.save(any())).thenReturn(orderEntityMockDb);
+        orderEntityMockDb = orderService.create(orderEntityMockDb);
+        assertEquals(OrderStatusEnum.PENDING, orderEntityMockDb.getStatus());
+        assertEquals(3.3D, orderEntityMockDb.getTotalAmount().doubleValue());
+        verify(orderRepository, times(1)).save(any());
+        verify(productsClients, atLeastOnce()).findById(any());
+    }
+
+    @Test
     void shouldGetAOrderWithSuccess() {
         var orderMock = new OrderEntity(OrderStatusEnum.APPROVED);
         when(orderRepository.findById(any())).thenReturn(Optional.of(orderMock));
         var order = orderService.get(UUID.randomUUID());
         assertNotNull(order);
         assertEquals(OrderStatusEnum.APPROVED, order.getStatus());
+    }
+
+    private OrderEntity getOrderEntity(List<UUID> productsId){
+        OrderEntity orderEntityMockDb = new OrderEntity();
+        List<OrderItemsEntity> orderItems = new ArrayList<>();
+        productsId.forEach(p-> orderItems.add(getOrderItemsEntity(orderEntityMockDb, p)));
+        orderEntityMockDb.setOrderItems(orderItems);
+        return orderEntityMockDb;
+    }
+
+    private OrderItemsEntity getOrderItemsEntity(OrderEntity order, UUID productId) {
+        OrderItemsEntity orderItemsEntity = new OrderItemsEntity();
+        orderItemsEntity.setProductId(productId);
+        orderItemsEntity.setOrder(order);
+        orderItemsEntity.setAmount(BigDecimal.ONE);
+        orderItemsEntity.setQuantity(1);
+        return orderItemsEntity;
+    }
+
+    protected ProductResponseClient getProductResponseClient(BigDecimal amount) {
+        return ProductResponseClient.builder()
+                .amount(amount)
+                .name("teste1")
+                .build();
     }
 
 }
