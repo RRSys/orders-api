@@ -3,9 +3,11 @@ package com.rrsys.ordersapi.services.impl;
 import com.rrsys.ordersapi.clients.ProductsClients;
 import com.rrsys.ordersapi.clients.response.product.ProductResponseClient;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
+import com.rrsys.ordersapi.exceptions.NotFoundException;
 import com.rrsys.ordersapi.models.OrderEntity;
 import com.rrsys.ordersapi.models.OrderItemsEntity;
 import com.rrsys.ordersapi.repositories.OrderRepository;
+import feign.FeignException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -137,6 +139,43 @@ class OrderServiceImplTest {
         orderEntityMockDb = orderService.create(orderEntityMockDb);
         assertEquals(OrderStatusEnum.PENDING, orderEntityMockDb.getStatus());
         verify(orderRepository, times(1)).save(any());
+    }
+
+//    @Test
+//    void shouldCreateANewOrderWithSuccessAndCalculateTotalAmout() {
+//        var prod1 = UUID.randomUUID();
+//        var prod2 = UUID.randomUUID();
+//        OrderEntity orderEntityMockDb = getOrderEntity(List.of(prod1, prod2));
+//
+//        when(productsClients.findById(prod1))
+//                .thenReturn(ResponseEntity.ok(getProductResponseClient(BigDecimal.valueOf(1.1))));
+//        when(productsClients.findById(prod2))
+//                .thenReturn(ResponseEntity.ok(getProductResponseClient(BigDecimal.valueOf(2.2))));
+//        when(orderRepository.save(any())).thenReturn(orderEntityMockDb);
+//        orderEntityMockDb = orderService.create(orderEntityMockDb);
+//        assertEquals(OrderStatusEnum.PENDING, orderEntityMockDb.getStatus());
+//        assertEquals(3.3D, orderEntityMockDb.getTotalAmount().doubleValue());
+//        verify(orderRepository, times(1)).save(any());
+//        verify(productsClients, atLeastOnce()).findById(any());
+//    }
+
+    @Test
+    void shouldLaunchAnExceptionNotFoundExceptionWhenProductNotFound() {
+        var prod1 = UUID.randomUUID();
+        var prod2 = UUID.randomUUID();
+        OrderEntity orderEntityMockDb = getOrderEntity(List.of(prod1, prod2));
+        var mockException = mock(FeignException.class);
+
+        when(productsClients.findById(prod1))
+                .thenReturn(ResponseEntity.ok(getProductResponseClient(BigDecimal.valueOf(1.1))));
+        when(productsClients.findById(prod2)).thenThrow(mockException);
+
+        when(mockException.status()).thenReturn(404);
+
+        NotFoundException exception = assertThrows(NotFoundException.class, ()-> {
+            orderService.create(orderEntityMockDb);
+        });
+        assertTrue(exception.getMessage().contains("product not found, productId: "+prod2));
     }
 
     @Test
