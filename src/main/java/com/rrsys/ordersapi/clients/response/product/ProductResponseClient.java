@@ -1,15 +1,15 @@
 package com.rrsys.ordersapi.clients.response.product;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProductResponseClient {
     private UUID id;
     private String name;
