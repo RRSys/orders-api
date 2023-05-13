@@ -1,7 +1,6 @@
 package com.rrsys.ordersapi.services.impl;
 
 import com.rrsys.ordersapi.clients.ProductsClients;
-import com.rrsys.ordersapi.clients.response.product.ProductResponseClient;
 import com.rrsys.ordersapi.enums.OrderStatusEnum;
 import com.rrsys.ordersapi.exceptions.NotFoundException;
 import com.rrsys.ordersapi.exceptions.ValidationOrderException;
@@ -12,9 +11,9 @@ import com.rrsys.ordersapi.services.OrderService;
 import feign.FeignException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -46,9 +45,18 @@ public class OrderServiceImpl implements OrderService {
         entity.setDate(LocalDateTime.now());
         entity.setStatus(OrderStatusEnum.PENDING);
 
-        entity.getOrderItems().forEach(this::validateProduct);
+        entity.getOrderItems().forEach(this::processProduct);
+        processOrder(entity);
 
         return orderRepository.save(entity);
+    }
+
+    private void processOrder(OrderEntity entity) {
+        entity.setTotalAmount(
+                entity.getOrderItems().stream()
+                        .map(p-> p.getAmount().multiply(BigDecimal.valueOf(p.getQuantity())))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        );
     }
 
     @Override
@@ -86,16 +94,15 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(status);
     }
 
-    private Boolean validateProduct(OrderItemsEntity orderItemsEntity){
+    private void processProduct(OrderItemsEntity orderItemsEntity){
         try {
-            productsClients.findById(orderItemsEntity.getProductId()).getBody();
-
-            return true;
+            var product = productsClients.findById(orderItemsEntity.getProductId()).getBody();
+            orderItemsEntity.setAmount(product.getAmount());
         } catch (FeignException ex) {
             if(ex.status() == 404) {
                 throw new NotFoundException("product not found, productId: "+ orderItemsEntity.getProductId());
             }
-            throw new ValidationOrderException("fatal error, productId: "+ orderItemsEntity.getProductId());
+            throw new ValidationOrderException("fatal error: "+ex.contentUTF8());
         }
     }
 }

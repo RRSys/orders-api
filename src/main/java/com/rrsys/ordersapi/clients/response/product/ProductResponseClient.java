@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -13,5 +14,5 @@ public class ProductResponseClient {
     private UUID id;
     private String name;
     private String description;
-    private double amount;
+    private BigDecimal amount;
 }
